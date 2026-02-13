@@ -13,6 +13,8 @@ interface Preferences {
   minMatchScore: number;
 }
 
+const STATUS_LOG_KEY = "jobTrackerStatusLog";
+
 function calculateMatchScore(job: any, preferences: Preferences): number {
   let score = 0;
 
@@ -25,9 +27,12 @@ function calculateMatchScore(job: any, preferences: Preferences): number {
   if (preferences.preferredMode.includes(job.mode)) score += 10;
   if (preferences.experienceLevel === job.experience) score += 10;
 
-  if (job.skills?.some((skill: string) =>
-    userSkills.includes(skill.toLowerCase())
-  )) score += 15;
+  if (
+    job.skills?.some((skill: string) =>
+      userSkills.includes(skill.toLowerCase())
+    )
+  )
+    score += 15;
 
   if (job.postedDaysAgo <= 2) score += 5;
   if (job.source === "LinkedIn") score += 5;
@@ -36,14 +41,18 @@ function calculateMatchScore(job: any, preferences: Preferences): number {
 }
 
 const Digest = () => {
-  const [digestJobs, setDigestJobs] = useState<(Job & { matchScore: number })[]>([]);
+  const [digestJobs, setDigestJobs] = useState<
+    (Job & { matchScore: number })[]
+  >([]);
 
   const preferences: Preferences | null = useMemo(() => {
     const stored = localStorage.getItem("jobTrackerPreferences");
     return stored ? JSON.parse(stored) : null;
   }, []);
 
-  const todayKey = `jobTrackerDigest_${new Date().toISOString().split("T")[0]}`;
+  const todayKey = `jobTrackerDigest_${new Date()
+    .toISOString()
+    .split("T")[0]}`;
 
   const generateDigest = () => {
     if (!preferences) return;
@@ -73,21 +82,31 @@ const Digest = () => {
   };
 
   const copyToClipboard = () => {
-    const text = digestJobs.map(j =>
-      `${j.title} - ${j.company} (${j.location}) | ${j.experience} yrs | Match: ${j.matchScore}%`
-    ).join("\n");
+    const text = digestJobs
+      .map(
+        j =>
+          `${j.title} - ${j.company} (${j.location}) | ${j.experience} yrs | Match: ${j.matchScore}%`
+      )
+      .join("\n");
 
     navigator.clipboard.writeText(text);
+    alert("Digest copied to clipboard");
   };
 
   const createEmailDraft = () => {
-    const body = digestJobs.map(j =>
-      `${j.title} - ${j.company} (${j.location}) | ${j.experience} yrs | Match: ${j.matchScore}%`
-    ).join("%0D%0A");
+    const body = digestJobs
+      .map(
+        j =>
+          `${j.title} - ${j.company} (${j.location}) | ${j.experience} yrs | Match: ${j.matchScore}%`
+      )
+      .join("%0D%0A");
 
-    window.location.href =
-      `mailto:?subject=My 9AM Job Digest&body=${body}`;
+    window.location.href = `mailto:?subject=My 9AM Job Digest&body=${body}`;
   };
+
+  const statusLog = JSON.parse(
+    localStorage.getItem(STATUS_LOG_KEY) || "[]"
+  );
 
   if (!preferences) {
     return (
@@ -101,9 +120,9 @@ const Digest = () => {
 
   return (
     <div className="flex-1 px-s4 py-s4 bg-muted/30">
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-3xl mx-auto space-y-s4">
 
-        <Button onClick={generateDigest} className="mb-s3">
+        <Button onClick={generateDigest}>
           Generate Today's 9AM Digest (Simulated)
         </Button>
 
@@ -126,13 +145,15 @@ const Digest = () => {
                 </p>
               </div>
 
-              {digestJobs.map((job) => (
+              {digestJobs.map(job => (
                 <div key={job.id} className="border-b pb-s2">
                   <h3 className="font-medium">{job.title}</h3>
                   <p className="text-sm text-muted-foreground">
                     {job.company} · {job.location} · {job.experience} yrs
                   </p>
-                  <p className="text-sm">Match Score: {job.matchScore}%</p>
+                  <p className="text-sm font-medium">
+                    Match Score: {job.matchScore}%
+                  </p>
                   <a
                     href={job.applyUrl}
                     target="_blank"
@@ -164,6 +185,21 @@ const Digest = () => {
             </CardContent>
           </Card>
         )}
+
+        {statusLog.length > 0 && (
+          <Card className="bg-white shadow-sm">
+            <CardContent className="p-s3 space-y-s2">
+              <h3 className="font-medium">Recent Status Updates</h3>
+              {statusLog.slice(0, 5).map((entry: any, idx: number) => (
+                <div key={idx} className="text-sm text-muted-foreground">
+                  {entry.title} — {entry.company} → {entry.status} (
+                  {new Date(entry.date).toLocaleDateString()})
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        )}
+
       </div>
     </div>
   );
