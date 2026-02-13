@@ -95,6 +95,11 @@ const FilterBar = ({ filters, onChange, locations }: FilterBarProps) => {
         <SelectContent className="bg-card z-50">
           <SelectItem value="latest">Latest</SelectItem>
           <SelectItem value="oldest">Oldest</SelectItem>
+          <SelectItem value="latest">Latest</SelectItem>
+          <SelectItem value="oldest">Oldest</SelectItem>
+          <SelectItem value="match">Match Score</SelectItem>
+          <SelectItem value="salary">Salary</SelectItem>
+
         </SelectContent>
       </Select>
     </div>
