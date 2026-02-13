@@ -44,6 +44,13 @@ const Dashboard = () => {
       result = result.filter((j) => j.experience === filters.experience);
     if (filters.source !== "all")
       result = result.filter((j) => j.source === filters.source);
+    if (filters.status !== "all") {
+  const stored = JSON.parse(localStorage.getItem("jobTrackerStatus") || "{}");
+  result = result.filter(
+    (j) => (stored[j.id] || "Not Applied") === filters.status
+  );
+}
+
 
     result.sort((a, b) =>
       filters.sort === "latest"
