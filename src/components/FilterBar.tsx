@@ -15,6 +15,7 @@ export interface Filters {
   experience: string;
   source: string;
   sort: string;
+  status: string;
 }
 
 interface FilterBarProps {
@@ -29,6 +30,8 @@ const FilterBar = ({ filters, onChange, locations }: FilterBarProps) => {
 
   return (
     <div className="flex flex-wrap items-end gap-s2">
+
+      {/* Keyword Search */}
       <div className="relative flex-1 min-w-[200px]">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
@@ -39,6 +42,7 @@ const FilterBar = ({ filters, onChange, locations }: FilterBarProps) => {
         />
       </div>
 
+      {/* Location */}
       <Select value={filters.location} onValueChange={(v) => set("location", v)}>
         <SelectTrigger className="w-[150px]">
           <SelectValue placeholder="Location" />
@@ -46,11 +50,14 @@ const FilterBar = ({ filters, onChange, locations }: FilterBarProps) => {
         <SelectContent className="bg-card z-50">
           <SelectItem value="all">All Locations</SelectItem>
           {locations.map((l) => (
-            <SelectItem key={l} value={l}>{l}</SelectItem>
+            <SelectItem key={l} value={l}>
+              {l}
+            </SelectItem>
           ))}
         </SelectContent>
       </Select>
 
+      {/* Mode */}
       <Select value={filters.mode} onValueChange={(v) => set("mode", v)}>
         <SelectTrigger className="w-[130px]">
           <SelectValue placeholder="Mode" />
@@ -63,7 +70,11 @@ const FilterBar = ({ filters, onChange, locations }: FilterBarProps) => {
         </SelectContent>
       </Select>
 
-      <Select value={filters.experience} onValueChange={(v) => set("experience", v)}>
+      {/* Experience */}
+      <Select
+        value={filters.experience}
+        onValueChange={(v) => set("experience", v)}
+      >
         <SelectTrigger className="w-[140px]">
           <SelectValue placeholder="Experience" />
         </SelectTrigger>
@@ -76,6 +87,7 @@ const FilterBar = ({ filters, onChange, locations }: FilterBarProps) => {
         </SelectContent>
       </Select>
 
+      {/* Source */}
       <Select value={filters.source} onValueChange={(v) => set("source", v)}>
         <SelectTrigger className="w-[130px]">
           <SelectValue placeholder="Source" />
@@ -88,33 +100,33 @@ const FilterBar = ({ filters, onChange, locations }: FilterBarProps) => {
         </SelectContent>
       </Select>
 
+      {/* Status Filter */}
+      <Select value={filters.status} onValueChange={(v) => set("status", v)}>
+        <SelectTrigger className="w-[150px]">
+          <SelectValue placeholder="Status" />
+        </SelectTrigger>
+        <SelectContent className="bg-card z-50">
+          <SelectItem value="all">All Status</SelectItem>
+          <SelectItem value="Not Applied">Not Applied</SelectItem>
+          <SelectItem value="Applied">Applied</SelectItem>
+          <SelectItem value="Rejected">Rejected</SelectItem>
+          <SelectItem value="Selected">Selected</SelectItem>
+        </SelectContent>
+      </Select>
+
+      {/* Sort */}
       <Select value={filters.sort} onValueChange={(v) => set("sort", v)}>
-        <SelectTrigger className="w-[130px]">
+        <SelectTrigger className="w-[150px]">
           <SelectValue placeholder="Sort" />
         </SelectTrigger>
         <SelectContent className="bg-card z-50">
           <SelectItem value="latest">Latest</SelectItem>
           <SelectItem value="oldest">Oldest</SelectItem>
-          <SelectItem value="latest">Latest</SelectItem>
-          <SelectItem value="oldest">Oldest</SelectItem>
           <SelectItem value="match">Match Score</SelectItem>
           <SelectItem value="salary">Salary</SelectItem>
-
-          <Select value={filters.status} onValueChange={(v) => set("status", v)}>
-  <SelectTrigger className="w-[150px]">
-    <SelectValue placeholder="Status" />
-  </SelectTrigger>
-   <SelectContent className="bg-card z-50">
-     <SelectItem value="all">All Status</SelectItem>
-     <SelectItem value="Not Applied">Not Applied</SelectItem>
-     <SelectItem value="Applied">Applied</SelectItem>
-     <SelectItem value="Rejected">Rejected</SelectItem>
-     <SelectItem value="Selected">Selected</SelectItem>
-  </SelectContent>
-</Select
-
         </SelectContent>
       </Select>
+
     </div>
   );
 };
