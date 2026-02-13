@@ -5,10 +5,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, Clock, Bookmark, BookmarkCheck, ExternalLink, Eye } from "lucide-react";
 
 interface JobCardProps {
-  job: Job;
+  job: Job & { matchScore?: number };;
   isSaved: boolean;
   onToggleSave: (id: string) => void;
   onView: (job: Job) => void;
+   job: Job & { matchScore?: number };
 }
 
 const sourceBadgeStyle: Record<string, string> = {
@@ -76,6 +77,22 @@ const JobCard = ({ job, isSaved, onToggleSave, onView }: JobCardProps) => {
         </div>
       </CardContent>
     </Card>
+    {job.matchScore !== undefined && (
+  <Badge
+    className={`text-xs ${
+      job.matchScore >= 80
+        ? "bg-green-500 text-white"
+        : job.matchScore >= 60
+        ? "bg-amber-500 text-white"
+        : job.matchScore >= 40
+        ? "bg-gray-500 text-white"
+        : "bg-gray-300 text-black"
+    }`}
+  >
+    {job.matchScore}%
+  </Badge>
+)}
+
   );
 };
 
